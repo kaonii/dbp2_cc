@@ -13,8 +13,9 @@ public class Application {
 
 //        CustomerRepository repository = new InMemoryRepository();
 
-        String url = "jdbc:derby:database;create=true"; // if database doesn't exist, will be created by derby
-        CustomerRepository repository = new JDBCRepository(url);
+            // if database doesn't exist, will be created by derby
+//        CustomerRepository repository = new JDBCRepository("jdbc:derby:database;create=true");
+        CustomerRepository repository = new JPARepository();
 
         Customer customer1 = new Customer();
         customer1.setEmail("customer1@mail.com");
