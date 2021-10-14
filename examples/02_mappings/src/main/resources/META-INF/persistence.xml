@@ -9,6 +9,8 @@
         Auflistung der Klassen, die von dieser PersistenceUnit verwaltet werden
         -->
 
+        <class>at.campus02.dbp2.mappings.Customer</class>
+
         <properties>
             <!--
             Generelle Settings wie JDBC Url und Klassenname des verwendeten Treibers
