@@ -2,7 +2,10 @@ package at.campus02.dbp2.mappings;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CustomerRepositoryJpa implements CustomerRepository {
@@ -74,21 +77,52 @@ public class CustomerRepositoryJpa implements CustomerRepository {
 
     @Override
     public List<Customer> getAllCustomers() {
-        return null;
+        TypedQuery<Customer> query = manager.createQuery(
+                "SELECT c FROM Customer c " +
+                        "ORDER BY c.registeredSince",
+                Customer.class
+        );
+        return query.getResultList();
     }
 
     @Override
     public List<Customer> findByLastname(String lastnamePart) {
-        return null;
+        if (lastnamePart == null || lastnamePart.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        TypedQuery<Customer> query = manager.createNamedQuery(
+                "Customer.findByLastnamePart",
+                Customer.class
+        );
+        query.setParameter("lastnamePart", "%" + lastnamePart + "%");
+
+
+        return query.getResultList();
     }
 
     @Override
     public List<Customer> findByAccountType(AccountType type) {
-        return null;
+
+        TypedQuery<Customer> query = manager.createQuery(
+                "SELECT c FROM Customer c " +
+                        "WHERE c.accountType = :accountType",
+                Customer.class
+        );
+        query.setParameter("accountType", type);
+        return query.getResultList();
     }
 
     @Override
     public List<Customer> findAllRegisteredAfter(LocalDate date) {
-        return null;
+        TypedQuery<Customer> query = manager.createQuery(
+                "SELECT c FROM Customer c " +
+                        "WHERE c.registeredSince > :registeredAfter",
+                Customer.class
+        );
+        query.setParameter("registeredAfter", date);
+        return query.getResultList();
     }
+
+
 }

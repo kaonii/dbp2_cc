@@ -1,9 +1,14 @@
 package at.campus02.dbp2.mappings;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
+
+@NamedQuery(
+        name = "Customer.findByLastnamePart",
+        query = "SELECT c FROM Customer c " +
+                "WHERE LOWER(c.lastname) LIKE LOWER(:lastnamePart) " +
+                "ORDER BY c.lastname")
 
 @Entity
 public class Customer {
@@ -13,6 +18,7 @@ public class Customer {
     private String firstname;
     private String lastname;
     private LocalDate registeredSince;
+    @Column(nullable = false)
     private AccountType accountType;
 
     public Integer getId() {
@@ -50,5 +56,18 @@ public class Customer {
 
     public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) && Objects.equals(firstname, customer.firstname) && Objects.equals(lastname, customer.lastname) && Objects.equals(registeredSince, customer.registeredSince) && accountType == customer.accountType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstname, lastname, registeredSince, accountType);
     }
 }

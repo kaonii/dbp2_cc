@@ -105,6 +105,17 @@ public class CustomerRepositoryCrudSpec {
     }
 
     @Test
+    public void createCustomerWithNullAsAccountTypeThrowException() {
+        //given
+        Customer notValid = initDefaultCustomer();
+        notValid.setAccountType(null);
+
+        //when
+        assertThrows(RuntimeException.class, () -> repository.create(notValid));
+
+    }
+
+    @Test
     public void readFindsCustomerInDatabase() {
         //given
         Customer existing = initDefaultCustomer();
