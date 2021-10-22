@@ -2,6 +2,7 @@ package at.campus02.dbp2.relations;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
@@ -67,6 +68,7 @@ public class OneToManyTests {
     }
 
     @Test
+    @Disabled("Only Works without orphanRemoval - enable after setting orphanRemoval to false")
     public void updateExampleWithCorrectingReferencesDOESNOTWORKONPURPOSE(){
         //------------------------------------------------
         //given
@@ -166,6 +168,52 @@ public class OneToManyTests {
         Species mergedFish = manager.merge(fish);
         manager.refresh(mergedFish);
         assertThat(mergedFish.getAnimals().size(), is(1));
+    }
+
+    @Test
+    public void orphanRemovalDeletesOrphansFromDataBase(){
+        //------------------------------------------------
+        //given
+        Animal clownfish = new Animal("Nemo");
+        Animal squirrel = new Animal("Squirrel");
+        Species fish = new Species("Fish");
+
+        // references for DB
+        clownfish.setSpecies(fish);
+
+        // FEHLER -> den wollen wir dann korrigieren
+        squirrel.setSpecies(fish);
+
+        //references for cascade
+        fish.getAnimals().add(clownfish);
+        fish.getAnimals().add(squirrel);
+
+        // speichern
+        manager.getTransaction().begin();
+        manager.persist(fish);
+        manager.getTransaction().commit();
+        manager.clear();
+
+        //------------------------------------------------
+        // when
+        manager.getTransaction().begin();
+        fish.getAnimals().remove(squirrel);
+        manager.merge(fish);
+        manager.getTransaction().commit();
+        manager.clear();
+
+        //then
+        Animal squirrelFromDb = manager.find(Animal.class, squirrel.getId());
+        // bei Verwendung von orphanRemoval wird squirrel auf der DB gelöscht
+        // add orphanRemoval = true to Species class
+        assertThat(squirrelFromDb, is(nullValue()));
+
+        Species refreshedFish = manager.merge(fish);
+        manager.refresh(refreshedFish);
+
+        assertThat(refreshedFish.getAnimals().size(), is(1));
+
+
     }
 
 }
