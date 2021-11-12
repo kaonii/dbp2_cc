@@ -1,6 +1,8 @@
 package at.campus02.dbp2.relations;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,6 +15,8 @@ public class Animal {
     private Student owner;
     @ManyToOne
     private Species species;
+    @ManyToMany // or Transient
+    private final List<Country> countries = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -47,6 +51,10 @@ public class Animal {
 
     public void setSpecies(Species species) {
         this.species = species;
+    }
+
+    public List<Country> getCountries() {
+        return countries;
     }
 
     // if you take student, endless loop

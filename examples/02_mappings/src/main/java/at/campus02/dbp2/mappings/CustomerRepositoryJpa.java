@@ -28,6 +28,7 @@ public class CustomerRepositoryJpa implements CustomerRepository {
             manager.getTransaction().begin();
             manager.persist(customer);
             manager.getTransaction().commit();
+
             return true;
 
     }
